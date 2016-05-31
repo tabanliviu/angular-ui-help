@@ -1,0 +1,27 @@
+{
+  "name": "angular-ui-help",
+  "version": "0.0.1",
+  "authors": [
+    "Liviu Taban <tabanliviu@yahoo.com>"
+  ],
+  "description": "angular help popups",
+  "main": "",
+  "moduleType": [],
+  "keywords": [
+    "angular-ui"
+  ],
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "~1.3.20",
+    "angular-bootstrap": "0.13.0",
+    "bootstrap": "^3.3.6"
+  }
+}

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="demo">
+<head>
+  <meta charset="UTF-8">
+  <title>angular-ui-help demo</title>
+
+  <link href="../bower_components/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
+  <link href="../bower_components/bootstrap/dist/css/bootstrap-theme.css" rel="stylesheet">
+  <style>
+    [ng-cloak] {
+      visibility: hidden;
+    }
+    button[disabled] {
+      color: #ccc;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body ng-cloak>
+
+<div id="main" class="container" ng-controller="DemoController as demo">
+  <div class="modal-backdrop fade in" ng-if="demo.$uiHelp.visible" ui-help-hide></div>
+
+  <h1 ui-help-target="welcome-message">UI Help - module for apps that need help popups</h1>
+
+  <button ng-click="demo.$uiHelp.show()"
+          ng-disabled="demo.$uiHelp.visible"
+          ui-help-target="show-help">
+    Show Help
+  </button>
+
+  <button ng-click="demo.$uiHelp.hide()"
+          ng-disabled="!demo.$uiHelp.visible"
+          ui-help-target="hide-help">
+    Hide Help
+  </button>
+
+  <button ng-click="demo.addFeatures()">
+    Add Features
+  </button>
+
+  <button ng-click="demo.removeFeatures()">
+    Remove Features
+  </button>
+
+  <label>{{ demo.$uiHelp.activeGroupName }}</label>
+  <button ng-click="demo.$uiHelp.setCurrentGroup('next')">
+    Next ({{ demo.$uiHelp.nextGroupName }})
+  </button>
+  <ui-help-groups></ui-help-groups>
+
+  <table class="table table-striped" ui-help-target="feature-table">
+    <thead>
+    <tr>
+      <th>#</th>
+      <th>Name</th>
+      <th>Description</th>
+      <th>Html</th>
+      <th>Javascript</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="feature in demo.features">
+      <td>{{ index + 1 }}</td>
+      <td ui-help-target="{{ feature.help }}"
+          ui-help-target-args="{data: {title: 'Dynamic Template Data', message: 'Feature: ' + feature.name}}">
+        {{ feature.name }}
+      </td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+
+<script src="../bower_components/jquery/dist/jquery.js"></script>
+<script src="../bower_components/angular/angular.js"></script>
+<script src="../bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+
+<script src="../src/config.js"></script>
+<script src="../src/help.service.js"></script>
+<script src="../src/helpTarget.directive.js"></script>
+<script src="../src/helpHide.directive.js"></script>
+<script src="../src/helpCurrentGroup.directive.js"></script>
+<script src="../src/helpGroups.directive.js"></script>
+
+<script src="demo.js"></script>
+
+<script type="text/ng-template" id="help/welcome-message.help.html">
+  <div class="popover">
+    <div class="arrow"></div>
+    <div class="popover-inner">
+      <h3 class="popover-title">
+        Test
+        <a ui-help-current-group="next" href="" class="pull-right">Next</a>
+      </h3>
+      <div class="popover-content">
+        <p>{{ getData().getWelcomeMesssage() }}</p>
+      </div>
+    </div>
+  </div>
+</script>
+
+<script type="text/ng-template" id="help/feature-table.help.html">
+  <div class="popover">
+    <div class="arrow"></div>
+    <div class="popover-inner">
+      <h3 class="popover-title">
+        Feature Table
+      </h3>
+      <div class="popover-content">
+        <a ui-help-current-group="next" href="">Next</a>
+        <a ui-help-hide href="">Click me to hide all</a>
+      </div>
+    </div>
+  </div>
+</script>
+
+<script type="text/ng-template" id="help/generic.help.html">
+  <div class="popover">
+    <div class="arrow"></div>
+    <div class="popover-inner">
+      <h3 class="popover-title">
+        {{ getData().title }}
+      </h3>
+      <div class="popover-content">
+        {{ getData().message }}
+      </div>
+    </div>
+  </div>
+</script>
+
+</body>
+</html>
