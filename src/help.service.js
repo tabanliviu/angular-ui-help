@@ -124,9 +124,11 @@ angular
 
         if (activeTarget[0]) {
           var availableTarget = angular.extend(activeTarget[0], target);
-          $timeout(function() {
-            redrawActiveTarget(availableTarget);
-          }, false);
+          if (service.visible) {
+            $timeout(function() {
+              redrawActiveTarget(availableTarget);
+            }, false);
+          }
         }
       }
 
@@ -196,6 +198,7 @@ angular
       function hideAvailableTarget(availableTarget) {
         availableTarget.targetElement.removeClass('ui-help-highlight');
         if (availableTarget && availableTarget.helpElement) {
+          availableTarget.helpElement.css({left: -9999});
           availableTarget.helpElement.hide();
         }
       }
