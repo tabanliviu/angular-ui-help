@@ -61,13 +61,14 @@
     </thead>
     <tbody>
     <tr ng-repeat="feature in demo.features">
-      <td>{{ index + 1 }}</td>
+      <td>{{ $index + 1 }}</td>
       <td ui-help-target="{{ feature.help }}"
           ui-help-target-args="{data: {title: 'Dynamic Template Data', message: 'Feature: ' + feature.name}}">
         {{ feature.name }}
       </td>
       <td></td>
-      <td></td>
+      <td ui-help-target="{{ 'feature-table-' + ($index + 1) + '-html' }}"
+          ui-help-target-args="{data: {index: ($index + 1)}}"></td>
       <td></td>
     </tr>
     </tbody>
@@ -126,6 +127,20 @@
       </h3>
       <div class="popover-content">
         {{ getData().message }}
+      </div>
+    </div>
+  </div>
+</script>
+
+<script type="text/ng-template" id="help/feature-table-2-html.help.html">
+  <div class="popover">
+    <div class="arrow"></div>
+    <div class="popover-inner">
+      <h3 class="popover-title">
+        Row {{ getData().index }}
+      </h3>
+      <div class="popover-content">
+        Index based help
       </div>
     </div>
   </div>
