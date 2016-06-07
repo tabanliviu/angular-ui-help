@@ -64,6 +64,10 @@ angular
     var featureTableTarget = {
       name: 'feature-table'
     };
+    var featureTable2HtmlTarget = {
+      name: 'feature-table-2-html',
+      dir: 'bottom'
+    };
 
     var groups = {
       'Main Features': [
@@ -74,6 +78,7 @@ angular
       'Bug Fixes': [
         dynamicTarget,
         featureTableTarget,
+        featureTable2HtmlTarget,
         notAvailableTarget
       ]
     };
