@@ -53,6 +53,24 @@ angular
         message: 'Click to hide current help group'
       }
     };
+    var addFeaturesButtonTarget = {
+      name: 'add-features',
+      dir: 'left',
+      templateName: 'generic',
+      data: {
+        title: 'Add Features',
+        message: 'Click to add features'
+      }
+    };
+    var removeFeaturesButtonTarget = {
+      name: 'remove-features',
+      dir: 'top',
+      templateName: 'generic',
+      data: {
+        title: 'Remove Features',
+        message: 'Click to remove features'
+      }
+    };
     var notAvailableTarget = {
       name: 'not-available'
     };
@@ -69,12 +87,36 @@ angular
       dir: 'bottom'
     };
 
+    var wizardGroups = {
+      'Wizard #1': [angular.extend({focus: true}, welcomeMessageTarget)],
+      'Wizard #2': [angular.extend({focus: true}, hideHelpButtonTarget)],
+      'Wizard #3': [angular.extend({focus: true}, showHelpButtonTarget)],
+      'Wizard #4': [angular.extend({focus: true}, addFeaturesButtonTarget)],
+      'Wizard #5': [angular.extend({focus: true}, removeFeaturesButtonTarget)]
+    };
+
+    var wizardGroups2 = {
+      'Wizard': {
+        cycle: true,
+        focus: true,
+        targets: [
+          welcomeMessageTarget,
+          hideHelpButtonTarget,
+          showHelpButtonTarget,
+          addFeaturesButtonTarget,
+          removeFeaturesButtonTarget
+        ]
+      }
+    };
+
     var groups = {
-      'Main Features': [
-        welcomeMessageTarget,
-        showHelpButtonTarget,
-        hideHelpButtonTarget
-      ],
+      'Main Features': {
+        targets: [
+          welcomeMessageTarget,
+          showHelpButtonTarget,
+          hideHelpButtonTarget
+        ]
+      },
       'Bug Fixes': [
         dynamicTarget,
         featureTableTarget,
@@ -83,7 +125,8 @@ angular
       ]
     };
 
-    $uiHelp.setGroups(groups);
+    $uiHelp.setGroups(wizardGroups);
+    $uiHelp.cycle = true;
     $uiHelp.visible = true;
 
     $timeout(function() {
