@@ -6,45 +6,64 @@
 
   <link href="../bower_components/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
   <link href="../bower_components/bootstrap/dist/css/bootstrap-theme.css" rel="stylesheet">
+  <link href="../src/help.css" rel="stylesheet">
   <style>
     [ng-cloak] {
       visibility: hidden;
     }
+
     button[disabled] {
       color: #ccc;
       cursor: not-allowed;
+    }
+
+    .popover [ui-help-current-group] {
+      margin-left: 2px;
+    }
+
+    body {
+      padding: 20px;
+    }
+
+    #main > button {
+      margin: 2px;
     }
   </style>
 </head>
 <body ng-cloak>
 
 <div id="main" class="container" ng-controller="DemoController as demo">
-  <div class="modal-backdrop fade in" ng-if="demo.$uiHelp.visible" ui-help-hide></div>
+  <div class="ui-help-focus ui-help-focus-top" ui-help-current-group="$next"></div>
+  <div class="ui-help-focus ui-help-focus-left" ui-help-current-group="$next"></div>
+  <div class="ui-help-focus ui-help-focus-right" ui-help-current-group="$next"></div>
+  <div class="ui-help-focus ui-help-focus-bottom" ui-help-current-group="$next"></div>
 
   <h1 ui-help-target="welcome-message">UI Help - module for apps that need help popups</h1>
 
-  <button ng-click="demo.$uiHelp.show()"
+  <button id="show-help" ng-click="demo.$uiHelp.show()"
           ng-disabled="demo.$uiHelp.visible"
           ui-help-target="show-help">
     Show Help
   </button>
 
-  <button ng-click="demo.$uiHelp.hide()"
+  <button id="hide-help" ng-click="demo.$uiHelp.hide()"
           ng-disabled="!demo.$uiHelp.visible"
           ui-help-target="hide-help">
     Hide Help
   </button>
 
-  <button ng-click="demo.addFeatures()">
+  <button id="add-features" ng-click="demo.addFeatures()"
+          ui-help-target="add-features">
     Add Features
   </button>
 
-  <button ng-click="demo.removeFeatures()">
+  <button id="remove-features" ng-click="demo.removeFeatures()"
+          ui-help-target="remove-features">
     Remove Features
   </button>
 
   <label>{{ demo.$uiHelp.activeGroupName }}</label>
-  <button ng-click="demo.$uiHelp.setCurrentGroup('next')">
+  <button ng-click="demo.$uiHelp.setCurrentGroup('$next')">
     Next ({{ demo.$uiHelp.nextGroupName }})
   </button>
   <ui-help-groups></ui-help-groups>
@@ -89,12 +108,11 @@
 <script src="demo.js"></script>
 
 <script type="text/ng-template" id="help/welcome-message.help.html">
-  <div class="popover">
+  <div class="popover" ui-help-current-group="$next">
     <div class="arrow"></div>
     <div class="popover-inner">
       <h3 class="popover-title">
-        Test
-        <a ui-help-current-group="next" href="" class="pull-right">Next</a>
+        Welcome
       </h3>
       <div class="popover-content">
         <p>{{ getData().getWelcomeMesssage() }}</p>
@@ -111,7 +129,7 @@
         Feature Table
       </h3>
       <div class="popover-content">
-        <a ui-help-current-group="next" href="">Next</a>
+        <a ui-help-current-group="$next" href="">Next</a>
         <a ui-help-hide href="">Click me to hide all</a>
       </div>
     </div>
@@ -119,7 +137,7 @@
 </script>
 
 <script type="text/ng-template" id="help/generic.help.html">
-  <div class="popover">
+  <div class="popover" ui-help-current-group="$next">
     <div class="arrow"></div>
     <div class="popover-inner">
       <h3 class="popover-title">

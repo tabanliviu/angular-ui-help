@@ -1,0 +1,25 @@
+.ui-help-focus {
+  position: absolute;
+  background-color: #000000;
+  opacity: 0.6;
+}
+
+.ui-help-focus-top {
+  top: 0;
+  left: 0;
+  width: 100%;
+}
+
+.ui-help-focus-left {
+  left: 0;
+}
+
+.ui-help-focus-right {
+  right: 0;
+}
+
+.ui-help-focus-bottom {
+  left: 0;
+  bottom: 0;
+  width: 100%;
+}
