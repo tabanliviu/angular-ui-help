@@ -1,7 +1,8 @@
 .ui-help-focus {
-  position: absolute;
+  position: fixed;
   background-color: #000000;
   opacity: 0.6;
+  z-index: 1060;
 }
 
 .ui-help-focus-top {
@@ -22,4 +23,21 @@
   left: 0;
   bottom: 0;
   width: 100%;
+}
+
+.ui-help-target-tooltip {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  background-color: #00b3ee;
+  border-radius: 10px;
+}
+
+.ui-help-target-tooltip-text {
+  visibility: hidden;
+  color: #ffffff;
+}
+
+.ui-help-target-tooltip:hover .ui-help-target-tooltip-text {
+  visibility: visible;
 }

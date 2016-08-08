@@ -18,23 +18,23 @@ angular
       var service = {};
 
       service.visible = false;
-      service.cycle = true;
-      service.cycleCount = 0;
       service.groups = {};
-      service.activeGroup = {};
+      // service.activeGroup = {};
       service.availableTargets = [];
 
       service.show = show;
       service.hide = hide;
+      // service.showNextTarget = cycle;
+      // service.focusTarget = focusTarget;
       service.updateTarget = updateTarget;
       service.setGroups = setGroups;
       service.setCurrentGroup = setCurrentGroup;
-      service.getNextActiveTargetName = getNextActiveTargetName;
-      service.getPreviousActiveTargetName = getPreviousActiveTargetName;
+      // service.getNextActiveTargetName = getNextActiveTargetName;
+      // service.getPreviousActiveTargetName = getPreviousActiveTargetName;
       service.onTargetAvailable = onTargetAvailable;
       service.onUpdateCurrentGroup = onUpdateCurrentGroup;
 
-      angular.element($window).on('resize', redraw);
+      angular.element($window).on('resize.uiHelp', redraw);
 
       return service;
 
@@ -47,72 +47,34 @@ angular
           };
         }
         group.name = group.name || name;
+        group.targetIndex = group.targetIndex || 0;
         return group;
       }
 
       function setGroups(groups) {
-        service.groups = {};
+        service.groups = service.groups || {};
         service.groupNames = [];
         angular.forEach(groups, function(targets, name) {
-          if (name === '$next') {
-            throw Error('Group name "$next" is reserved!');
-          }
-          if (name === '$previous') {
-            throw Error('Group name "$previous" is reserved!');
-          }
           service.groups[name] = createGroup(name, targets);
           service.groupNames.push(name);
         });
         service.setCurrentGroup(service.groupNames[0]);
       }
 
-      function getNextActiveTargetName() {
-        var currentIndex = service.groupNames.indexOf(service.activeGroupName);
-        var nextIndex = currentIndex + 1;
-        if (nextIndex >= service.groupNames.length) {
-          nextIndex = 0;
-          service.cycleCount += 1;
-        }
-        return service.groupNames[nextIndex];
-      }
-
-      function getPreviousActiveTargetName() {
-        var currentIndex = service.groupNames.indexOf(service.activeGroupName);
-        var previousIndex = currentIndex - 1;
-        if (previousIndex < 0) {
-          previousIndex = service.groupNames.length - 1;
-        }
-        return service.groupNames[previousIndex];
-      }
-
       function setCurrentGroup(groupName) {
         groupName = groupName || service.activeGroupName;
 
-        if (groupName === '$next') {
-          return service.setCurrentGroup(service.nextGroupName);
-        }
-        if (groupName === '$previous') {
-          return service.setCurrentGroup(service.previousGroupName);
-        }
-
         service.activeGroupName = groupName;
         service.activeGroup = service.groups[service.activeGroupName];
-        service.previousGroupName = service.getPreviousActiveTargetName();
-        service.nextGroupName = service.getNextActiveTargetName();
 
+        hideHighlight();
         angular.forEach(service.availableTargets, hideAvailableTarget);
 
-        if (!service.cycle && service.cycleCount > 0) {
-          service.cycleCount = 0;
-          service.hide();
-        }
-        else {
-          service.show();
-        }
+        service.show();
       }
 
-      function onUpdateCurrentGroup() {
-        setCurrentGroup(service.activeGroupName);
+      function onUpdateCurrentGroup(groupName) {
+        setCurrentGroup(groupName);
       }
 
       function onTargetAvailable(scope, element, target, targetArgs) {
@@ -222,6 +184,10 @@ angular
         var foundTarget;
         var targets = service.activeGroup.targets;
 
+        if (service.activeGroup.cycle) {
+          targets = [service.activeGroup.targets[service.activeGroup.targetIndex]];
+        }
+
         foundTarget = targets.filter(function(activeTarget) {
           return activeTarget && activeTarget.name === availableTarget.name;
         })[0];
@@ -274,6 +240,33 @@ angular
           availableTarget.helpElement.css({left: -9999});
           availableTarget.helpElement.hide();
         }
+      }
+
+      function focusTarget(availableTarget) {
+        if (availableTarget.focus || service.activeGroup.focus) {
+          angular.forEach(service.availableTargets, hideAvailableTarget);
+          showAvailableTarget(availableTarget);
+          highlightElement(availableTarget.targetElement);
+        }
+      }
+
+      function getNextActiveTargetName() {
+        var currentIndex = service.groupNames.indexOf(service.activeGroupName);
+        var nextIndex = currentIndex + 1;
+        if (nextIndex >= service.groupNames.length) {
+          nextIndex = 0;
+          service.cycleCount += 1;
+        }
+        return service.groupNames[nextIndex];
+      }
+
+      function getPreviousActiveTargetName() {
+        var currentIndex = service.groupNames.indexOf(service.activeGroupName);
+        var previousIndex = currentIndex - 1;
+        if (previousIndex < 0) {
+          previousIndex = service.groupNames.length - 1;
+        }
+        return service.groupNames[previousIndex];
       }
     }
 
@@ -341,35 +334,40 @@ angular
 
     function highlightElement($element) {
       $element.addClass('ui-help-highlight');
+      var parentOffset = $element.parent().offset();
       var position = $element.position();
-      var $window = angular.element(window);
-      var windowDimension = {
-        width: $window.width(),
-        height: $window.height()
+      var offset = {
+        top: parentOffset.top + position.top,
+        left: parentOffset.left + position.left
+      };
+      var $parent = angular.element(window);
+      var parentDimension = {
+        width: $parent.width(),
+        height: $parent.height()
       };
       var dimension = {
         height: $element.outerHeight(true),
         width: $element.outerWidth(true)
       };
       angular.element('.ui-help-focus.ui-help-focus-top').css({
-        height: position.top
+        height: offset.top
       }).removeClass('hide');
 
       angular.element('.ui-help-focus.ui-help-focus-left').css({
-        top: position.top,
-        width: position.left,
+        top: offset.top,
+        width: offset.left,
         height: dimension.height
       }).removeClass('hide');
 
       angular.element('.ui-help-focus.ui-help-focus-right').css({
-        top: position.top,
-        width: windowDimension.width - (position.left + dimension.width),
+        top: offset.top,
+        width: parentDimension.width - (offset.left + dimension.width),
         height: dimension.height
       }).removeClass('hide');
 
       angular.element('.ui-help-focus.ui-help-focus-bottom').css({
-        top: position.top + dimension.height,
-        height: windowDimension.height - (position.top + dimension.height)
+        top: offset.top + dimension.height,
+        height: parentDimension.height - (offset.top + dimension.height)
       }).removeClass('hide');
     }
   });

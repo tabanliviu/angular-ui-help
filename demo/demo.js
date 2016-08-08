@@ -76,7 +76,7 @@ angular
     };
     var dynamicTarget = {
       name: 'dynamic',
-      dir: 'top',
+      dir: 'bottom',
       templateName: 'generic'
     };
     var featureTableTarget = {
@@ -87,46 +87,32 @@ angular
       dir: 'bottom'
     };
 
-    var wizardGroups = {
-      'Wizard #1': [angular.extend({focus: true}, welcomeMessageTarget)],
-      'Wizard #2': [angular.extend({focus: true}, hideHelpButtonTarget)],
-      'Wizard #3': [angular.extend({focus: true}, showHelpButtonTarget)],
-      'Wizard #4': [angular.extend({focus: true}, addFeaturesButtonTarget)],
-      'Wizard #5': [angular.extend({focus: true}, removeFeaturesButtonTarget)]
-    };
-
-    var wizardGroups2 = {
+    var groups = {
+      'Main Features': {
+        targets: [
+          welcomeMessageTarget
+        ]
+      },
       'Wizard': {
         cycle: true,
         focus: true,
         targets: [
-          welcomeMessageTarget,
           hideHelpButtonTarget,
-          showHelpButtonTarget,
-          addFeaturesButtonTarget,
-          removeFeaturesButtonTarget
-        ]
-      }
-    };
-
-    var groups = {
-      'Main Features': {
-        targets: [
-          welcomeMessageTarget,
-          showHelpButtonTarget,
-          hideHelpButtonTarget
+          showHelpButtonTarget
         ]
       },
       'Bug Fixes': [
-        dynamicTarget,
         featureTableTarget,
+        dynamicTarget,
         featureTable2HtmlTarget,
+        addFeaturesButtonTarget,
+        removeFeaturesButtonTarget,
         notAvailableTarget
       ]
     };
 
-    $uiHelp.setGroups(wizardGroups);
-    $uiHelp.cycle = true;
+    $uiHelp.setGroups(groups);
+    $uiHelp.setCurrentGroup('Wizard');
     $uiHelp.visible = true;
 
     $timeout(function() {
