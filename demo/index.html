@@ -49,6 +49,23 @@
       z-index: 1070;
       background-color: #fff;
     }
+
+    .index-title {
+      text-align: center;
+      font-size: 1em;
+      font-weight: bold;
+      border-radius: 1em;
+      border: 1px solid #aaa;
+      width: 2em;
+      height: 2em;
+      display: inline-block;
+      padding: 0.5em;
+      background-color: #ddd;
+      float: right;
+      margin-top: -0.5em;
+      margin-right: -0.5em;
+
+    }
   </style>
 </head>
 <body ng-cloak>
@@ -71,7 +88,7 @@
 
       <ul>
         <li ng-repeat="groupName in demo.$uiHelp.groupNames">
-          <a ng-href="#ui-help-{{groupName}}" ui-help-current-group="{{groupName}}">{{groupName}}</a>
+          <a ng-href="#?ui-help-{{groupName}}" ui-help-current-group="{{groupName}}">{{groupName}}</a>
         </li>
       </ul>
     </div>
@@ -137,6 +154,17 @@
   </div>
 </div>
 
+<ui-help-group-def name="Wizard" class="ng-hide">
+  <ui-help-target-def name="show-help">
+    <title>Show Help</title>
+    <message>Click to show current help group, (click anywhere to go to the next help tip)</message>
+  </ui-help-target-def>
+
+  <ui-help-target-def name="hide-help">
+    <title>Hide Help</title>
+    <message>Click to hide current help group, (click anywhere to go to the next help tip)</message>
+  </ui-help-target-def>
+</ui-help-group-def>
 
 <script src="../bower_components/jquery/dist/jquery.js"></script>
 <script src="../bower_components/angular/angular.js"></script>
@@ -160,6 +188,7 @@
       </h3>
       <div class="popover-content">
         <p>{{ getData().getWelcomeMesssage() }}</p>
+        <img src="https://placekitten.com/200/200">
       </div>
     </div>
   </div>
@@ -173,7 +202,6 @@
         Feature Table
       </h3>
       <div class="popover-content">
-        <a ui-help-current-group="$next" href="">Next</a>
         <a ui-help-hide href="">Click me to hide all</a>
       </div>
     </div>
@@ -185,6 +213,7 @@
     <div class="arrow"></div>
     <div class="popover-inner">
       <h3 class="popover-title">
+        <span ng-if="getGroup().cycle" class="index-title">{{getGroup().targetIndex + 1}}</span>
         {{ getData().title }}
       </h3>
       <div class="popover-content">

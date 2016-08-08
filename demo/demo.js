@@ -29,11 +29,11 @@ angular
 
     var showHelpButtonTarget = {
       name: 'show-help',
-      dir: 'bottom',
+      dir: 'right',
       templateName: 'generic',
       data: {
         title: 'Show Help',
-        message: 'Click to show current help group'
+        message: 'Click to show current help group, (click anywhere to go to the next help tip)'
       }
     };
     var welcomeMessageTarget = {
@@ -50,7 +50,7 @@ angular
       templateName: 'generic',
       data: {
         title: 'Hide Help',
-        message: 'Click to hide current help group'
+        message: 'Click to hide current help group, (click anywhere to go to the next help tip)'
       }
     };
     var addFeaturesButtonTarget = {

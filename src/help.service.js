@@ -35,6 +35,7 @@ angular
       return service;
 
       function createGroup(name, targets) {
+        console.log('createGroup', name, targets);
         var group = targets;
         if (angular.isArray(targets)) {
           group = {
@@ -43,6 +44,7 @@ angular
           };
         }
         group.name = group.name || name;
+        group.cycle = group.cycle || false;
         group.targetIndex = group.targetIndex || 0;
         group.next = next;
         return group;
@@ -78,6 +80,7 @@ angular
 
         service.activeGroupName = groupName;
         service.activeGroup = service.groups[service.activeGroupName];
+        service.activeGroup.targetIndex = 0;
 
         if (!service.activeGroup.focus) {
           hideHighlight();
@@ -91,7 +94,7 @@ angular
       }
 
       function onTargetAvailable(scope, element, target, targetArgs) {
-        var availableTarget = parseTarget(service.activeGroup, scope, element, target, targetArgs);
+        var availableTarget = parseTarget(scope, element, target, targetArgs);
 
         if (!availableTarget) {
           return;
@@ -280,65 +283,66 @@ angular
         }
         return service.groupNames[previousIndex];
       }
-    }
 
-    function parseTarget(activeGroup, scope, element, target, targetArgs) {
-      var parsed;
-      var availableTarget = {
-        $create: angular.noop,
-        $destroy: angular.noop,
-        targetElement: element,
-        helpElement: null
-      };
-
-      parsed = target.replace(/\n/g, ' ').match(/^([^(]+?)\s*(\((.*)\))?$/);
-
-      if (!parsed || parsed.length !== 4) {
-        return;
-      }
-
-      availableTarget.$create = $create;
-
-      function $create() {
-        availableTarget.name = parsed[1];
-        availableTarget.scope = scope.$new();
-
-        availableTarget.getArgs = function() {
-          return availableTarget.scope.$eval(targetArgs) || {};
+      function parseTarget(scope, element, target, targetArgs) {
+        var parsed;
+        var availableTarget = {
+          $create: angular.noop,
+          $destroy: angular.noop,
+          targetElement: element,
+          helpElement: null
         };
 
-        availableTarget.scope.getGroup = function() {
-          return activeGroup;
-        };
+        parsed = target.replace(/\n/g, ' ').match(/^([^(]+?)\s*(\((.*)\))?$/);
 
-        availableTarget.scope.getTarget = function() {
+        if (!parsed || parsed.length !== 4) {
+          return;
+        }
+
+        availableTarget.$create = $create;
+
+        function $create() {
+          availableTarget.name = parsed[1];
+          availableTarget.scope = scope.$new();
+
+          availableTarget.getArgs = function() {
+            return availableTarget.scope.$eval(targetArgs) || {};
+          };
+
+          availableTarget.scope.getGroup = function() {
+            return service.activeGroup;
+          };
+
+          availableTarget.scope.getTarget = function() {
+            return availableTarget;
+          };
+
+          availableTarget.scope.getData = function() {
+            return availableTarget.getArgs().data || availableTarget.data;
+          };
+
+          availableTarget.$create = angular.noop;
+          availableTarget.$destroy = $destroy;
+
           return availableTarget;
-        };
+        }
 
-        availableTarget.scope.getData = function() {
-          return availableTarget.getArgs().data || availableTarget.data;
-        };
-
-        availableTarget.$create = angular.noop;
-        availableTarget.$destroy = $destroy;
+        function $destroy() {
+          availableTarget.targetElement.removeClass('ui-help-highlight');
+          availableTarget.scope.$destroy();
+          availableTarget.scope = null;
+          if (availableTarget.helpElement) {
+            availableTarget.helpElement.remove();
+            availableTarget.helpElement = null;
+          }
+          availableTarget.$create = $create;
+          availableTarget.$destroy = angular.noop;
+        }
 
         return availableTarget;
       }
-
-      function $destroy() {
-        availableTarget.targetElement.removeClass('ui-help-highlight');
-        availableTarget.scope.$destroy();
-        availableTarget.scope = null;
-        if (availableTarget.helpElement) {
-          availableTarget.helpElement.remove();
-          availableTarget.helpElement = null;
-        }
-        availableTarget.$create = $create;
-        availableTarget.$destroy = angular.noop;
-      }
-
-      return availableTarget;
     }
+
 
     function hideHighlight() {
       angular.element('.ui-help-focus').addClass('hide');
