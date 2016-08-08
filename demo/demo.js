@@ -93,14 +93,6 @@ angular
           welcomeMessageTarget
         ]
       },
-      'Wizard': {
-        cycle: true,
-        focus: true,
-        targets: [
-          hideHelpButtonTarget,
-          showHelpButtonTarget
-        ]
-      },
       'Bug Fixes': [
         featureTableTarget,
         dynamicTarget,
@@ -108,11 +100,19 @@ angular
         addFeaturesButtonTarget,
         removeFeaturesButtonTarget,
         notAvailableTarget
-      ]
+      ],
+      'Wizard': {
+        cycle: true,
+        focus: true,
+        targets: [
+          hideHelpButtonTarget,
+          showHelpButtonTarget
+        ]
+      }
     };
 
     $uiHelp.setGroups(groups);
-    $uiHelp.setCurrentGroup('Wizard');
+    $uiHelp.setCurrentGroup('Main Features');
     $uiHelp.visible = true;
 
     $timeout(function() {

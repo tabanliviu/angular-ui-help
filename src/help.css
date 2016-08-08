@@ -25,12 +25,19 @@
   width: 100%;
 }
 
+[ui-help-target] {
+  position: relative;
+}
+
 .ui-help-target-tooltip {
-  display: inline-block;
+  display: none;
   width: 20px;
   height: 20px;
   background-color: #00b3ee;
   border-radius: 10px;
+  position: absolute;
+  top: 0;
+  right: 0;
 }
 
 .ui-help-target-tooltip-text {

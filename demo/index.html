@@ -70,8 +70,8 @@
       <ui-help-groups></ui-help-groups>
 
       <ul>
-        <li ng-repeat="target in demo.$uiHelp.availableTargets">
-          <a href="#" ng-click="demo.$uiHelp.focusTarget(target)">Focus {{target.name}}</a>
+        <li ng-repeat="groupName in demo.$uiHelp.groupNames">
+          <a ng-href="#ui-help-{{groupName}}" ui-help-current-group="{{groupName}}">{{groupName}}</a>
         </li>
       </ul>
 
@@ -92,9 +92,7 @@
             ng-disabled="demo.$uiHelp.visible"
             ui-help-target="show-help">
       Show Help
-      <span class="ui-help-target-tooltip" ng-click="demo.$uiHelp.show('show-help')">
-      <span class="ui-help-target-tooltip-text">?</span>
-    </span>
+      </span>
     </button>
 
     <button id="hide-help" ng-click="demo.$uiHelp.hide()"
@@ -106,6 +104,9 @@
     <button id="add-features" ng-click="demo.addFeatures()"
             ui-help-target="add-features">
       Add Features
+      <span class="ui-help-target-tooltip" ng-click="demo.$uiHelp.showTarget('add-features')">
+        <span class="ui-help-target-tooltip-text">?</span>
+      </span>
     </button>
 
     <button id="remove-features" ng-click="demo.removeFeatures()"

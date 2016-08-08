@@ -24,13 +24,9 @@ angular
 
       service.show = show;
       service.hide = hide;
-      // service.showNextTarget = cycle;
-      // service.focusTarget = focusTarget;
       service.updateTarget = updateTarget;
       service.setGroups = setGroups;
       service.setCurrentGroup = setCurrentGroup;
-      // service.getNextActiveTargetName = getNextActiveTargetName;
-      // service.getPreviousActiveTargetName = getPreviousActiveTargetName;
       service.onTargetAvailable = onTargetAvailable;
       service.onUpdateCurrentGroup = onUpdateCurrentGroup;
 
@@ -48,7 +44,19 @@ angular
         }
         group.name = group.name || name;
         group.targetIndex = group.targetIndex || 0;
+        group.next = next;
         return group;
+
+        function next() {
+          if (group.cycle) {
+            group.targetIndex += 1;
+            if (group.targetIndex >= group.targets.length) {
+              group.targetIndex = 0;
+            }
+
+            service.show();
+          }
+        }
       }
 
       function setGroups(groups) {
@@ -64,11 +72,16 @@ angular
       function setCurrentGroup(groupName) {
         groupName = groupName || service.activeGroupName;
 
+        if (groupName === service.activeGroupName && service.visible) {
+          return;
+        }
+
         service.activeGroupName = groupName;
         service.activeGroup = service.groups[service.activeGroupName];
 
-        hideHighlight();
-        angular.forEach(service.availableTargets, hideAvailableTarget);
+        if (!service.activeGroup.focus) {
+          hideHighlight();
+        }
 
         service.show();
       }
@@ -106,12 +119,14 @@ angular
 
       function redraw() {
         if (service.visible) {
+          angular.forEach(service.availableTargets, hideAvailableTarget);
           angular.forEach(service.availableTargets, showAvailableTarget);
         }
       }
 
       function show() {
         service.visible = true;
+        angular.element('body').addClass('ui-help-visible');
         redraw();
       }
 
@@ -140,43 +155,47 @@ angular
       }
 
       function redrawActiveTarget(activeTarget) {
+        $timeout(function() {
+          doRedrawActiveTarget(activeTarget);
+        }, 0, false);
+      }
+
+      function doRedrawActiveTarget(activeTarget) {
         if (activeTarget.helpElement) {
-          $timeout(function() {
-            activeTarget.helpElement.show();
-            var margin = getMargin(activeTarget.targetElement.get(0));
-            var dirParts = activeTarget.dir.split('-');
-            var coords = $position.positionElements(activeTarget.targetElement, activeTarget.helpElement, activeTarget.dir, true);
-            var offset = angular.extend({
-              top: 0,
-              left: 0
-            }, activeTarget.offset);
+          activeTarget.helpElement.show();
+          var margin = getMargin(activeTarget.targetElement.get(0));
+          var dirParts = activeTarget.dir.split('-');
+          var coords = $position.positionElements(activeTarget.targetElement, activeTarget.helpElement, activeTarget.dir, true);
+          var offset = angular.extend({
+            top: 0,
+            left: 0
+          }, activeTarget.offset);
 
-            var topOffset = 0;
-            var leftOffset = 0;
+          var topOffset = 0;
+          var leftOffset = 0;
 
-            switch (dirParts[0]) {
-              case 'top':
-                topOffset = -margin.top;
-                break;
-              case 'bottom':
-                topOffset = margin.bottom;
-                break;
-              case 'left':
-                leftOffset = -margin.left;
-                break;
-              case 'right':
-                leftOffset = margin.right;
-                break;
-            }
+          switch (dirParts[0]) {
+            case 'top':
+              topOffset = -margin.top;
+              break;
+            case 'bottom':
+              topOffset = margin.bottom;
+              break;
+            case 'left':
+              leftOffset = -margin.left;
+              break;
+            case 'right':
+              leftOffset = margin.right;
+              break;
+          }
 
-            coords.top += offset.top + topOffset;
-            coords.left += offset.left + leftOffset;
-            activeTarget.helpElement.css(coords);
+          coords.top += offset.top + topOffset;
+          coords.left += offset.left + leftOffset;
+          activeTarget.helpElement.css(coords);
 
-            if (activeTarget.focus || service.activeGroup.focus) {
-              highlightElement(activeTarget.targetElement);
-            }
-          }, 0, false);
+          if (activeTarget.focus || service.activeGroup.focus) {
+            highlightElement(activeTarget.targetElement);
+          }
         }
       }
 
@@ -232,6 +251,7 @@ angular
         hideHighlight();
         angular.forEach(service.availableTargets, hideAvailableTarget);
         service.visible = false;
+        angular.element('body').removeClass('ui-help-visible');
       }
 
       function hideAvailableTarget(availableTarget) {
@@ -239,14 +259,6 @@ angular
         if (availableTarget && availableTarget.helpElement) {
           availableTarget.helpElement.css({left: -9999});
           availableTarget.helpElement.hide();
-        }
-      }
-
-      function focusTarget(availableTarget) {
-        if (availableTarget.focus || service.activeGroup.focus) {
-          angular.forEach(service.availableTargets, hideAvailableTarget);
-          showAvailableTarget(availableTarget);
-          highlightElement(availableTarget.targetElement);
         }
       }
 
