@@ -4,10 +4,15 @@
   <meta charset="UTF-8">
   <title>angular-ui-help demo</title>
 
+  <!-- bower:css -->
   <link href="vendor/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
   <link href="vendor/bootstrap/dist/css/bootstrap-theme.css" rel="stylesheet">
+  <!-- endbower -->
 
+  <!-- app:css -->
   <link href="../src/help.css" rel="stylesheet">
+  <!-- endapp -->
+
   <style>
     [ng-cloak] {
       visibility: hidden;
@@ -26,78 +31,150 @@
       padding: 20px;
     }
 
+    #main {
+      width: 80vw;
+      margin-top: 20px;
+    }
+
     #main > button {
       margin: 2px;
+    }
+
+    .demo-menu {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      width: 20vw;
+      z-index: 1070;
+      background-color: #fff;
+    }
+
+    .index-title {
+      text-align: center;
+      font-size: 1em;
+      font-weight: bold;
+      border-radius: 1em;
+      border: 1px solid #aaa;
+      width: 2em;
+      height: 2em;
+      display: inline-block;
+      padding: 0.5em;
+      background-color: #ddd;
+      float: right;
+      margin-top: -0.5em;
+      margin-right: -0.5em;
+
     }
   </style>
 </head>
 <body ng-cloak>
 
 <div id="main" class="container" ng-controller="DemoController as demo">
-  <div class="ui-help-focus ui-help-focus-top" ui-help-current-group="$next"></div>
-  <div class="ui-help-focus ui-help-focus-left" ui-help-current-group="$next"></div>
-  <div class="ui-help-focus ui-help-focus-right" ui-help-current-group="$next"></div>
-  <div class="ui-help-focus ui-help-focus-bottom" ui-help-current-group="$next"></div>
 
-  <h1 ui-help-target="welcome-message">UI Help - module for apps that need help popups</h1>
+  <div class="col-lg-2">
+    <div class="demo-menu">
+      <button ng-click="demo.$uiHelp.show()"
+              ng-disabled="demo.$uiHelp.visible">
+        Show Help
+      </button>
 
-  <button id="show-help" ng-click="demo.$uiHelp.show()"
-          ng-disabled="demo.$uiHelp.visible"
-          ui-help-target="show-help">
-    Show Help
-  </button>
+      <button ng-click="demo.$uiHelp.hide()"
+              ng-disabled="!demo.$uiHelp.visible">
+        Hide Help
+      </button>
 
-  <button id="hide-help" ng-click="demo.$uiHelp.hide()"
-          ng-disabled="!demo.$uiHelp.visible"
-          ui-help-target="hide-help">
-    Hide Help
-  </button>
+      <ui-help-groups></ui-help-groups>
 
-  <button id="add-features" ng-click="demo.addFeatures()"
-          ui-help-target="add-features">
-    Add Features
-  </button>
+      <ul>
+        <li ng-repeat="groupName in demo.$uiHelp.groupNames">
+          <a ng-href="#?ui-help-{{groupName}}" ui-help-current-group="{{groupName}}">{{groupName}}</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="col-lg-10">
+    <div class="ui-help-focus ui-help-focus-top" ui-help-current-group="$next"></div>
+    <div class="ui-help-focus ui-help-focus-left" ui-help-current-group="$next"></div>
+    <div class="ui-help-focus ui-help-focus-right" ui-help-current-group="$next"></div>
+    <div class="ui-help-focus ui-help-focus-bottom" ui-help-current-group="$next"></div>
+    <h1>Demo</h1>
+    <h1 ui-help-target="welcome-message">UI Help - module for apps that need help popups</h1>
 
-  <button id="remove-features" ng-click="demo.removeFeatures()"
-          ui-help-target="remove-features">
-    Remove Features
-  </button>
+    <button id="show-help" ng-click="demo.$uiHelp.show()"
+            ng-disabled="demo.$uiHelp.visible"
+            ui-help-target="show-help">
+      Show Help
+      </span>
+    </button>
 
-  <label>{{ demo.$uiHelp.activeGroupName }}</label>
-  <button ng-click="demo.$uiHelp.setCurrentGroup('$next')">
-    Next ({{ demo.$uiHelp.nextGroupName }})
-  </button>
-  <ui-help-groups></ui-help-groups>
+    <button id="hide-help" ng-click="demo.$uiHelp.hide()"
+            ng-disabled="!demo.$uiHelp.visible"
+            ui-help-target="hide-help">
+      Hide Help
+    </button>
 
-  <table class="table table-striped" ui-help-target="feature-table">
-    <thead>
-    <tr>
-      <th>#</th>
-      <th>Name</th>
-      <th>Description</th>
-      <th>Html</th>
-      <th>Javascript</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr ng-repeat="feature in demo.features">
-      <td>{{ $index + 1 }}</td>
-      <td ui-help-target="{{ feature.help }}"
-          ui-help-target-args="{data: {title: 'Dynamic Template Data', message: 'Feature: ' + feature.name}}">
-        {{ feature.name }}
-      </td>
-      <td></td>
-      <td ui-help-target="{{ 'feature-table-' + ($index + 1) + '-html' }}"
-          ui-help-target-args="{data: {index: ($index + 1)}}"></td>
-      <td></td>
-    </tr>
-    </tbody>
-  </table>
+    <button id="add-features" ng-click="demo.addFeatures()"
+            ui-help-target="add-features">
+      Add Features
+      <span class="ui-help-target-tooltip" ng-click="demo.$uiHelp.showTarget('add-features')">
+        <span class="ui-help-target-tooltip-text">?</span>
+      </span>
+    </button>
+
+    <button id="remove-features" ng-click="demo.removeFeatures()"
+            ui-help-target="remove-features">
+      Remove Features
+    </button>
+
+    <table class="table table-striped" ui-help-target="feature-table">
+      <thead>
+      <tr>
+        <th>#</th>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Html</th>
+        <th>Javascript</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr ng-repeat="feature in demo.features">
+        <td>{{ $index + 1 }}</td>
+        <td ui-help-target="{{ feature.help }}"
+            ui-help-target-args="{data: {title: 'Dynamic Template Data', message: 'Feature: ' + feature.name}}">
+          {{ feature.name }}
+        </td>
+        <td></td>
+        <td ui-help-target="{{ 'feature-table-' + ($index + 1) + '-html' }}"
+            ui-help-target-args="{data: {index: ($index + 1)}}"></td>
+        <td></td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
 </div>
 
+<<<<<<< HEAD
 <script src="vendor/jquery/dist/jquery.js"></script>
 <script src="vendor/angular/angular.js"></script>
 <script src="vendor/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+=======
+<ui-help-group-def name="Wizard" class="ng-hide">
+  <ui-help-target-def name="show-help">
+    <title>Show Help</title>
+    <message>Click to show current help group, (click anywhere to go to the next help tip)</message>
+  </ui-help-target-def>
+
+  <ui-help-target-def name="hide-help">
+    <title>Hide Help</title>
+    <message>Click to hide current help group, (click anywhere to go to the next help tip)</message>
+  </ui-help-target-def>
+</ui-help-group-def>
+
+<script src="../bower_components/jquery/dist/jquery.js"></script>
+<script src="../bower_components/angular/angular.js"></script>
+<script src="../bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+>>>>>>> master
 
 <script src="../src/config.js"></script>
 <script src="../src/help.service.js"></script>
@@ -117,6 +194,7 @@
       </h3>
       <div class="popover-content">
         <p>{{ getData().getWelcomeMesssage() }}</p>
+        <img src="https://placekitten.com/200/200">
       </div>
     </div>
   </div>
@@ -130,7 +208,6 @@
         Feature Table
       </h3>
       <div class="popover-content">
-        <a ui-help-current-group="$next" href="">Next</a>
         <a ui-help-hide href="">Click me to hide all</a>
       </div>
     </div>
@@ -142,6 +219,7 @@
     <div class="arrow"></div>
     <div class="popover-inner">
       <h3 class="popover-title">
+        <span ng-if="getGroup().cycle" class="index-title">{{getGroup().targetIndex + 1}}</span>
         {{ getData().title }}
       </h3>
       <div class="popover-content">

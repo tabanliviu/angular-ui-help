@@ -14,7 +14,12 @@ angular
 
       function setCurrentGroup() {
         scope.$apply(function() {
-          $uiHelp.setCurrentGroup(attrs.uiHelpCurrentGroup);
+          if (attrs.uiHelpCurrentGroup === '$next') {
+            $uiHelp.activeGroup.next();
+          }
+          else {
+            $uiHelp.setCurrentGroup(attrs.uiHelpCurrentGroup);
+          }
         });
       }
     }

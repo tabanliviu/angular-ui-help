@@ -29,11 +29,11 @@ angular
 
     var showHelpButtonTarget = {
       name: 'show-help',
-      dir: 'bottom',
+      dir: 'right',
       templateName: 'generic',
       data: {
         title: 'Show Help',
-        message: 'Click to show current help group'
+        message: 'Click to show current help group, (click anywhere to go to the next help tip)'
       }
     };
     var welcomeMessageTarget = {
@@ -50,7 +50,7 @@ angular
       templateName: 'generic',
       data: {
         title: 'Hide Help',
-        message: 'Click to hide current help group'
+        message: 'Click to hide current help group, (click anywhere to go to the next help tip)'
       }
     };
     var addFeaturesButtonTarget = {
@@ -76,7 +76,7 @@ angular
     };
     var dynamicTarget = {
       name: 'dynamic',
-      dir: 'top',
+      dir: 'bottom',
       templateName: 'generic'
     };
     var featureTableTarget = {
@@ -87,46 +87,32 @@ angular
       dir: 'bottom'
     };
 
-    var wizardGroups = {
-      'Wizard #1': [angular.extend({focus: true}, welcomeMessageTarget)],
-      'Wizard #2': [angular.extend({focus: true}, hideHelpButtonTarget)],
-      'Wizard #3': [angular.extend({focus: true}, showHelpButtonTarget)],
-      'Wizard #4': [angular.extend({focus: true}, addFeaturesButtonTarget)],
-      'Wizard #5': [angular.extend({focus: true}, removeFeaturesButtonTarget)]
-    };
-
-    var wizardGroups2 = {
+    var groups = {
+      'Main Features': {
+        targets: [
+          welcomeMessageTarget
+        ]
+      },
+      'Bug Fixes': [
+        featureTableTarget,
+        dynamicTarget,
+        featureTable2HtmlTarget,
+        addFeaturesButtonTarget,
+        removeFeaturesButtonTarget,
+        notAvailableTarget
+      ],
       'Wizard': {
         cycle: true,
         focus: true,
         targets: [
-          welcomeMessageTarget,
           hideHelpButtonTarget,
-          showHelpButtonTarget,
-          addFeaturesButtonTarget,
-          removeFeaturesButtonTarget
+          showHelpButtonTarget
         ]
       }
     };
 
-    var groups = {
-      'Main Features': {
-        targets: [
-          welcomeMessageTarget,
-          showHelpButtonTarget,
-          hideHelpButtonTarget
-        ]
-      },
-      'Bug Fixes': [
-        dynamicTarget,
-        featureTableTarget,
-        featureTable2HtmlTarget,
-        notAvailableTarget
-      ]
-    };
-
-    $uiHelp.setGroups(wizardGroups);
-    $uiHelp.cycle = true;
+    $uiHelp.setGroups(groups);
+    $uiHelp.setCurrentGroup('Main Features');
     $uiHelp.visible = true;
 
     $timeout(function() {

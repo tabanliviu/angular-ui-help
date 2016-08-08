@@ -1,4 +1,4 @@
 <select ng-model="groups.$uiHelp.activeGroupName"
         ng-options="name for name in groups.$uiHelp.groupNames"
-        ng-change="groups.$uiHelp.onUpdateCurrentGroup()"
+        ng-change="groups.$uiHelp.onUpdateCurrentGroup(groups.$uiHelp.activeGroupName)"
 ></select>
