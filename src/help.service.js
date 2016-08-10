@@ -7,6 +7,7 @@ angular
 
     provider.$get = $get;
     provider.getTemplateUrl = getTemplateUrl;
+    provider.getFallbackTemplateUrl = getFallbackTemplateUrl;
 
     return provider;
 
@@ -14,18 +15,24 @@ angular
       return activeTarget.templateUrl || 'help/' + (activeTarget.templateName || activeTarget.name) + '.help.html';
     }
 
+    function getFallbackTemplateUrl() {
+      return 'help/generic.help.html';
+    }
+
     function $get($window, $q, $compile, $templateRequest, $position, $timeout) {
       var service = {};
 
       service.visible = false;
+      service.groupDefs = {};
       service.groups = {};
-      // service.activeGroup = {};
+      service.groupNames = [];
+      service.activeGroup = null;
       service.availableTargets = [];
 
       service.show = show;
       service.hide = hide;
       service.updateTarget = updateTarget;
-      service.setGroups = setGroups;
+      service.addGroup = addGroup;
       service.setCurrentGroup = setCurrentGroup;
       service.onTargetAvailable = onTargetAvailable;
       service.onUpdateCurrentGroup = onUpdateCurrentGroup;
@@ -35,7 +42,6 @@ angular
       return service;
 
       function createGroup(name, targets) {
-        console.log('createGroup', name, targets);
         var group = targets;
         if (angular.isArray(targets)) {
           group = {
@@ -61,14 +67,9 @@ angular
         }
       }
 
-      function setGroups(groups) {
-        service.groups = service.groups || {};
-        service.groupNames = [];
-        angular.forEach(groups, function(targets, name) {
-          service.groups[name] = createGroup(name, targets);
-          service.groupNames.push(name);
-        });
-        service.setCurrentGroup(service.groupNames[0]);
+      function addGroup(group) {
+        service.groups[group.name] = createGroup(group.name, group);
+        service.groupNames.push(group.name);
       }
 
       function setCurrentGroup(groupName) {
@@ -78,8 +79,14 @@ angular
           return;
         }
 
+        var group = service.groups[groupName];
+        if (!group) {
+          return;
+        }
+
         service.activeGroupName = groupName;
-        service.activeGroup = service.groups[service.activeGroupName];
+        service.activeGroup = group;
+
         service.activeGroup.targetIndex = 0;
 
         if (!service.activeGroup.focus) {
@@ -102,7 +109,7 @@ angular
 
         service.availableTargets.push(availableTarget);
 
-        if (service.visible) {
+        if (service.activeGroup && service.visible) {
           showAvailableTarget(availableTarget);
         }
 
@@ -228,12 +235,18 @@ angular
 
         var templatePromise;
         var templateUrl = provider.getTemplateUrl(activeTarget);
+        var fallbackTemplateUrl = provider.getFallbackTemplateUrl();
         if (activeTarget.helpElement) {
           activeTarget.helpElement.show();
           templatePromise = $q.when(activeTarget);
         }
         else {
           templatePromise = $templateRequest(templateUrl, true)
+            .then(function(template) {
+              return template;
+            }, function() {
+              return $templateRequest(fallbackTemplateUrl, true);
+            })
             .then(function(template) {
               var $body = angular.element('body');
               var helpElement = angular.element(template);

@@ -48,3 +48,7 @@
 .ui-help-target-tooltip:hover .ui-help-target-tooltip-text {
   visibility: visible;
 }
+
+ui-help-group-def {
+  display: none;
+}

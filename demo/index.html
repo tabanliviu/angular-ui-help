@@ -52,6 +52,7 @@
 
     .index-title {
       text-align: center;
+      line-height: 1em;
       font-size: 1em;
       font-weight: bold;
       border-radius: 1em;
@@ -64,7 +65,18 @@
       float: right;
       margin-top: -0.5em;
       margin-right: -0.5em;
+    }
 
+    .special {
+      position: absolute;
+      background: #fff;
+      display: block;
+      border-radius: 10px;
+      padding: 10px;
+      /* margin: -10px; */
+      /* width: 100px; */
+      /* height: 100px; */
+      z-index: 1060;
     }
   </style>
 </head>
@@ -98,8 +110,10 @@
     <div class="ui-help-focus ui-help-focus-left" ui-help-current-group="$next"></div>
     <div class="ui-help-focus ui-help-focus-right" ui-help-current-group="$next"></div>
     <div class="ui-help-focus ui-help-focus-bottom" ui-help-current-group="$next"></div>
+
     <h1>Demo</h1>
-    <h1 ui-help-target="welcome-message">UI Help - module for apps that need help popups</h1>
+    <h2 ui-help-target="welcome-message">UI Help - module for apps that need help popups</h2>
+    <h3 ui-help-target="special">Special</h3>
 
     <button id="show-help" ng-click="demo.$uiHelp.show()"
             ng-disabled="demo.$uiHelp.visible"
@@ -151,18 +165,55 @@
       </tr>
       </tbody>
     </table>
+
+    <pre>
+&#x3C;ui-help-group-def name=&#x22;Wizard&#x22; cycle=&#x22;true&#x22; focus=&#x22;true&#x22;&#x3E;
+  &#x3C;ui-help-target-def name=&#x22;hide-help&#x22;&#x3E;
+    &#x3C;title&#x3E;Hide Help&#x3C;/title&#x3E;
+    &#x3C;message&#x3E;Click to hide current help group, (click anywhere to go to the next help tip)&#x3C;/message&#x3E;
+  &#x3C;/ui-help-target-def&#x3E;
+
+  &#x3C;ui-help-target-def name=&#x22;show-help&#x22;&#x3E;
+    &#x3C;title&#x3E;Show Help&#x3C;/title&#x3E;
+    &#x3C;message&#x3E;Click to show current help group, (click anywhere to go to the next help tip)&#x3E;&#x3C;/message&#x3E;
+  &#x3C;/ui-help-target-def&#x3E;
+&#x3C;/ui-help-group-def&#x3E;
+</pre>
   </div>
 </div>
 
-<ui-help-group-def name="Wizard" class="ng-hide">
-  <ui-help-target-def name="show-help">
-    <title>Show Help</title>
-    <message>Click to show current help group, (click anywhere to go to the next help tip)</message>
+<ui-help-group-def name="Bug Fixes">
+  <ui-help-target-def name="feature-table" dir="right"></ui-help-target-def>
+
+  <ui-help-target-def name="dynamic" dir="bottom"></ui-help-target-def>
+
+  <ui-help-target-def name="feature-table-2-html" dir="bottom"></ui-help-target-def>
+
+  <ui-help-target-def name="add-features" dir="left">
+    <title>Add Features</title>
+    <message>Click to add features</message>
   </ui-help-target-def>
 
+  <ui-help-target-def name="remove-features" dir="top">
+    <title>Remove Features</title>
+    <message>Click to remove features</message>
+  </ui-help-target-def>
+
+  <ui-help-target-def name="special">
+    <title>Special</title>
+    <message>Custom css</message>
+  </ui-help-target-def>
+</ui-help-group-def>
+
+<ui-help-group-def name="Wizard" cycle="true" focus="true">
   <ui-help-target-def name="hide-help">
     <title>Hide Help</title>
     <message>Click to hide current help group, (click anywhere to go to the next help tip)</message>
+  </ui-help-target-def>
+
+  <ui-help-target-def name="show-help">
+    <title>Show Help</title>
+    <message>Click to show current help group, (click anywhere to go to the next help tip)</message>
   </ui-help-target-def>
 </ui-help-group-def>
 
@@ -176,8 +227,31 @@
 <script src="../src/helpHide.directive.js"></script>
 <script src="../src/helpCurrentGroup.directive.js"></script>
 <script src="../src/helpGroups.directive.js"></script>
+<script src="../src/helpGroupDef.directive.js"></script>
+<script src="../src/helpTargetDef.directive.js"></script>
 
 <script src="demo.js"></script>
+
+<script type="text/ng-template" id="help/generic.help.html">
+  <div class="popover" ui-help-current-group="$next">
+    <div class="arrow"></div>
+    <div class="popover-inner">
+      <h3 class="popover-title">
+        <span ng-if="getGroup().cycle" class="index-title">{{getGroup().targetIndex + 1}}</span>
+        {{ getData().title }}
+      </h3>
+      <div class="popover-content">
+        {{ getData().message }}
+      </div>
+    </div>
+  </div>
+</script>
+
+<script type="text/ng-template" id="help/special.help.html">
+  <div class="special">
+    <div class="message">{{ getData().message }}</div>
+  </div>
+</script>
 
 <script type="text/ng-template" id="help/welcome-message.help.html">
   <div class="popover" ui-help-current-group="$next">
@@ -203,21 +277,6 @@
       </h3>
       <div class="popover-content">
         <a ui-help-hide href="">Click me to hide all</a>
-      </div>
-    </div>
-  </div>
-</script>
-
-<script type="text/ng-template" id="help/generic.help.html">
-  <div class="popover" ui-help-current-group="$next">
-    <div class="arrow"></div>
-    <div class="popover-inner">
-      <h3 class="popover-title">
-        <span ng-if="getGroup().cycle" class="index-title">{{getGroup().targetIndex + 1}}</span>
-        {{ getData().title }}
-      </h3>
-      <div class="popover-content">
-        {{ getData().message }}
       </div>
     </div>
   </div>
